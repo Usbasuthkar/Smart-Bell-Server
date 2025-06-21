@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 5000;
 
 connectToDatabase().then((collections) => {
   // Register routes
-  app.use('/', require('./routes/signup')(collections));
-  app.use('/', require('./routes/login')(collections));
+  app.use('/', require('./Routes/signup')(collections));
+  app.use('/', require('./Routes/login')(collections));
   app.use('/', require('./Routes/client')(collections));
   app.use('/', require('./Routes/investor')(collections));
   app.use('/', require('./Routes/userType')(collections));
