@@ -14,6 +14,7 @@ connectToDatabase().then((collections) => {
   app.use('/', require('./Routes/login')(collections));
   app.use('/', require('./Routes/client')(collections));
   app.use('/', require('./Routes/investor')(collections));
+  app.use('/', require('./Routes/dashboard')(collections));
   app.use('/', require('./Routes/userType')(collections));
 
   app.listen(PORT, () => {
