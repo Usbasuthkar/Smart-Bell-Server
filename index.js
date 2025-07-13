@@ -15,6 +15,7 @@ connectToDatabase().then((collections) => {
   app.use('/', require('./Routes/client')(collections));
   app.use('/', require('./Routes/investor')(collections));
   app.use('/', require('./Routes/userType')(collections));
+  app.use('/', require('./Routes/dashboard')(collections));
 
   app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

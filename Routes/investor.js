@@ -6,6 +6,7 @@ module.exports = (collections) => {
 
   router.post('/InvestorRegister', async (req, res) => {
     const {
+      id,
       investorType,
       investmentRange,
       industries,
@@ -26,8 +27,9 @@ module.exports = (collections) => {
     } = req.body;
 
     try {
-      await UserType.insertOne({ email, type: "Investor" });
+      await UserType.insertOne({ id,email, type: "Investor" });
       await InvestorRegister.insertOne({
+        id,
         investorType,
         investmentRange,
         industries,
@@ -55,13 +57,13 @@ module.exports = (collections) => {
   });
   router.get('/Investor', async (req, res) => {
   try {
-    const { email } = req.query;
+    const { id } = req.query;
 
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+    if (!id) {
+      return res.status(400).json({ error: 'id is required' });
     }
 
-    const investor = await InvestorRegister.findOne({ email });
+    const investor = await InvestorRegister.findOne({ id });
 
     if (!investor) {
       return res.status(404).json({ error: 'Investor not found' });
@@ -75,16 +77,16 @@ module.exports = (collections) => {
   });
 
   router.put('/Investor_update', async (req, res) => {
-  const { email, key, data } = req.body;
+  const { id, key, data } = req.body;
 
-  if (!email || !key || typeof data === 'undefined') {
-    return res.status(400).json({ error: 'Missing required fields: email, key, or data' });
+  if (!id || !key || typeof data === 'undefined') {
+    return res.status(400).json({ error: 'Missing required fields: id, key, or data' });
   }
 
   try {
     // Get the current document
-    const investor = await InvestorRegister.findOne({ email });
-
+    const investor = await InvestorRegister.findOne({ id });
+    console.log(id);
     if (!investor) {
       return res.status(404).json({ error: 'Investor not found' });
     }
@@ -99,7 +101,7 @@ module.exports = (collections) => {
       updateOp = { $set: { [key]: data } };
     }
 
-    const result = await InvestorRegister.updateOne({ email }, updateOp);
+    const result = await InvestorRegister.updateOne({ id }, updateOp);
 
     if (result.modifiedCount === 0) {
       return res.status(400).json({ message: 'No changes were made' });

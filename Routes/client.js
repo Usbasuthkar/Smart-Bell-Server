@@ -6,6 +6,7 @@ module.exports = (collections) => {
 
   router.post('/ClientRegister', async (req, res) => {
     const {
+      id,
       role,
       companyName,
       industry,
@@ -26,8 +27,9 @@ module.exports = (collections) => {
     } = req.body;
 
     try {
-      await UserType.insertOne({ email, type: "Client" });
+      await UserType.insertOne({ id,email, type: "Client" });
       await ClientRegister.insertOne({
+        id,
         role,
         companyName,
         industry,
@@ -47,43 +49,43 @@ module.exports = (collections) => {
         join_year
       });
 
-      res.status(200).json({ message: "Successfully registered" });
+      return res.status(200).json({ message: "Successfully registered" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Internal Server Error" });
+      return res.status(500).json({ message: "Internal Server Error" });
     }
   });
   router.get('/Client', async (req, res) => {
   try {
-    const { email } = req.query;
+    const { id } = req.query;
 
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+    if (!id) {
+      return res.status(400).json({ error: 'id is required' });
     }
 
-    const client = await ClientRegister.findOne({ email });
+    const client = await ClientRegister.findOne({ id });
 
     if (!client) {
       return res.status(404).json({ error: 'Client not found' });
     }
 
-    res.status(200).json(client);
+    return res.status(200).json(client);
   } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: 'Internal Server Error' });
     } 
   });
   
   router.put('/Client_update', async (req, res) => {
-  const { email, key, data } = req.body;
+  const { id, key, data } = req.body;
 
-  if (!email || !key || typeof data === 'undefined') {
-    return res.status(400).json({ error: 'Missing required fields: email, key, or data' });
+  if (!id || !key || typeof data === 'undefined') {
+    return res.status(400).json({ error: 'Missing required fields: id, key, or data' });
   }
 
   try {
     // Get the current document
-    const client = await ClientRegister.findOne({ email });
+    const client = await ClientRegister.findOne({ id });
 
     if (!client) {
       return res.status(404).json({ error: 'Client not found' });
@@ -99,7 +101,7 @@ module.exports = (collections) => {
       updateOp = { $set: { [key]: data } };
     }
 
-    const result = await ClientRegister.updateOne({ email }, updateOp);
+    const result = await ClientRegister.updateOne({ id }, updateOp);
 
     if (result.modifiedCount === 0) {
       return res.status(400).json({ message: 'No changes were made' });

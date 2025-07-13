@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-
+const crypto = require('crypto');
 const router = express.Router();
 
 module.exports = (collections) => {
@@ -16,13 +16,13 @@ module.exports = (collections) => {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = { email, password: hashedPassword };
-
+      const id = crypto.randomBytes(16).toString("hex");
+      const newUser = { email, password: hashedPassword, id };
       await User.insertOne(newUser);
-      res.status(201).json({ message: 'User created successfully' });
+      return res.status(201).json({ message: 'User created successfully',id });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Server error' });
+      return res.status(500).json({ message: 'Server error' });
     }
   });
 
